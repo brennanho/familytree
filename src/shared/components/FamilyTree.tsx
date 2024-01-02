@@ -35,11 +35,15 @@ const FamilyTree = () => {
   const [gender, setGender] = useState(Gender.Male);
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
-  const onFamilyMemberInputNameChange = (e: any) => {
+  const handleFamilyMemberInputNameChange = (e: any) => {
     setNewFamilyMemberName(e.target.value);
   };
 
-  const onAddNewFamilyMember = () => {
+  const handleFamilyMemberSubmit = (e: any) => {
+    if (e.key === "Enter") handleAddNewFamilyMember();
+  };
+
+  const handleAddNewFamilyMember = () => {
     const removeFamilyMember = (id: string) => {
       setMembers((members) => members.filter((node) => node.id !== id));
     };
@@ -60,20 +64,20 @@ const FamilyTree = () => {
     setPosition({ x: position.x + 16, y: position.y + 16 });
   };
 
-  const onToggleGender = () => {
+  const handleToggleGender = () => {
     setGender(gender === Gender.Male ? Gender.Female : Gender.Male);
   };
 
-  const onFamilyMembersChange: OnNodesChange = useCallback(
+  const handleFamilyMembersChange: OnNodesChange = useCallback(
     (changes) => setMembers((nds) => applyNodeChanges(changes, nds)),
     [setMembers]
   );
-  const onFamilyRelationshipsChange: OnEdgesChange = useCallback(
+  const handleFamilyRelationshipsChange: OnEdgesChange = useCallback(
     (changes) => setRelationships((eds) => applyEdgeChanges(changes, eds)),
     [setRelationships]
   );
 
-  const onConnect = useCallback(
+  const handleConnect = useCallback(
     (params: Edge | Connection) =>
       setRelationships((els) => addEdge({ ...params }, els)),
     [setRelationships]
@@ -93,26 +97,27 @@ const FamilyTree = () => {
         <Input
           borderRightRadius={0}
           placeholder="Enter a name"
-          onChange={onFamilyMemberInputNameChange}
+          onChange={handleFamilyMemberInputNameChange}
+          onKeyDown={handleFamilyMemberSubmit}
         />
         <Button
           borderLeftRadius={0}
           paddingLeft="24px"
           paddingRight="24px"
           colorScheme="blue"
-          onClick={onAddNewFamilyMember}
+          onClick={handleAddNewFamilyMember}
         >
           +
         </Button>
         <Spacer minWidth="16px" />
-        <Switch colorScheme="red" size="lg" onChange={onToggleGender} />
+        <Switch colorScheme="red" size="lg" onChange={handleToggleGender} />
       </Flex>
       <ReactFlow
         nodes={members}
         edges={relationships}
-        onNodesChange={onFamilyMembersChange}
-        onEdgesChange={onFamilyRelationshipsChange}
-        onConnect={onConnect}
+        onNodesChange={handleFamilyMembersChange}
+        onEdgesChange={handleFamilyRelationshipsChange}
+        onConnect={handleConnect}
         nodeTypes={nodeTypes}
         fitView
       >
